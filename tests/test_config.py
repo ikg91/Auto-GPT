@@ -19,8 +19,8 @@ def test_initial_values(config):
     assert config.speak_mode == False
     assert config.fast_llm_model == "gpt-3.5-turbo"
     assert config.smart_llm_model == "gpt-4"
-    assert config.fast_token_limit == 4000
-    assert config.smart_token_limit == 8000
+    assert config.fast_token_limit == 3000
+    assert config.smart_token_limit == 3000
 
 
 def test_set_continuous_mode(config):
