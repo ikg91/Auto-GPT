@@ -44,7 +44,7 @@ def test_google_search(
     mock_ddg = mocker.Mock()
     mock_ddg.return_value = return_value
 
-    mocker.patch("autogpt.commands.google_search.ddg", mock_ddg)
+    mocker.patch("autogpt.commands.google_search.DDGS.text", mock_ddg)
     actual_output = google_search(query, config, num_results=num_results)
     expected_output = safe_google_results(expected_output)
     assert actual_output == expected_output

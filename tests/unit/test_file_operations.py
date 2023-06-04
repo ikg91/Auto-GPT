@@ -13,6 +13,8 @@ from pytest_mock import MockerFixture
 
 import autogpt.commands.file_operations as file_ops
 from autogpt.config import Config
+from autogpt.memory.vector.memory_item import MemoryItem
+from autogpt.memory.vector.utils import Embedding
 from autogpt.utils import readable_file_size
 from autogpt.workspace import Workspace
 
@@ -20,6 +22,23 @@ from autogpt.workspace import Workspace
 @pytest.fixture()
 def file_content():
     return "This is a test file.\n"
+
+
+@pytest.fixture()
+def mock_MemoryItem_from_text(mocker: MockerFixture, mock_embedding: Embedding):
+    mocker.patch.object(
+        file_ops.MemoryItem,
+        "from_text",
+        new=lambda content, source_type, metadata: MemoryItem(
+            raw_content=content,
+            summary=f"Summary of content '{content}'",
+            chunk_summaries=[f"Summary of content '{content}'"],
+            chunks=[content],
+            e_summary=mock_embedding,
+            e_chunks=[mock_embedding],
+            metadata=metadata | {"source_type": source_type},
+        ),
+    )
 
 
 @pytest.fixture()
@@ -200,9 +219,14 @@ def test_split_file(max_length, overlap, content, expected):
     )
 
 
-def test_read_file(test_file_with_content_path: Path, file_content, config):
+def test_read_file(
+    mock_MemoryItem_from_text,
+    test_file_with_content_path: Path,
+    file_content,
+    config: Config,
+):
     content = file_ops.read_file(test_file_with_content_path, config)
-    assert content == file_content
+    assert content.replace("\r", "") == file_content
 
 
 def test_write_to_file(test_file_path: Path, config):

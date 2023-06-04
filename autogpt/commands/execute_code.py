@@ -2,7 +2,6 @@
 import os
 import subprocess
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 import docker
 from docker.errors import ImageNotFound
@@ -126,7 +125,7 @@ def validate_command(command: str, config: Config) -> bool:
     "execute_shell",
     "Execute Shell Command, non-interactive commands only",
     '"command_line": "<command_line>"',
-    lambda x: x.execute_local_commands,
+    lambda cfg: cfg.execute_local_commands,
     "You are not allowed to run local shell commands. To execute"
     " shell commands, EXECUTE_LOCAL_COMMANDS must be set to 'True' "
     "in your config file: .env - do not attempt to bypass the restriction.",
